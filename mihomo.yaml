@@ -1,151 +1,475 @@
+# ------------------------------------------------------------
+# 锚点区
+proxy: &proxy { type: select, include-all: true, proxies: [🚀全球代理, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
+direct: &direct { type: select, include-all: true, proxies: [🎯全球直连, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
+ipcidr_mrs: &ipcidr_mrs { type: http, interval: 86400, behavior: ipcidr, format: mrs, proxy: 🎯全球直连 }
+domain_mrs: &domain_mrs { type: http, interval: 86400, behavior: domain, format: mrs, proxy: 🎯全球直连 }
+# 延迟检测 URL
+p: &p
+  type: http
+  interval: 3600 # 更新provider的时间
+  size-limit: 0 # 限制下载文件的最大大小，默认为 0 即不限制文件大小，单位为字节 (b)
+  header: # 自定义 http 请求头
+    User-Agent:
+      - meta;clash.meta;Clash/v1.18.0;clash
+  health-check: # 健康检查 (延迟测试)
+    enable: true
+    url: https://www.gstatic.com/generate_204 # 健康检查测试地址
+    interval: 300 # 健康检查间隔
+    timeout: 5000 # 健康检查超时时间
+    lazy: true # 懒惰状态
+override: &override
+  tfo: false # 启用 TCP Fast Open, 仅生效于 TCP 协议
+  mptcp: false # 启用 TCP Multi Path, 仅生效于 TCP 协议
+  udp: true # 是否允许 UDP 通过代理，默认为 false
+  udp-over-tcp: false # 启用 UDP over TCP，默认 false
+  skip-cert-verify: true # 跳过证书验证，仅适用于使用 tls 的协议
+  ip-version: ipv4-prefer # 可选：dual/ipv4/ipv6/ipv4-prefer/ipv6-prefer ,默认使用 dual, ipv4: 仅使用 IPv4, ipv6: 仅使用 IPv6, ipv4-prefer: 优先使用 IPv4，对于 TCP 会进行双栈解析，并发链接但是优先使用 IPv4 链接，UDP 则为双栈解析，获取结果中的第一个 IPv4, ipv6-prefer:优先使用 IPv6，对于 TCP 会进行双栈解析，并发链接但是优先使用 IPv6 链接，UDP 则为双栈解析，获取结果中的第一个 IPv6
+# URL 测试配置
+u: &u
+  type: url-test # 测试类型
+  tolerance: 1 # 自动选择切换容差
+  strategy: consistent-hashing # 负载均衡策略
+  url: https://www.gstatic.com/generate_204 #健康检查测试地址
+  interval: 300 #健康检查间隔，如不为 0 则启用定时测试，单位为秒
+  lazy: true # 懒惰状态
+  timeout: 5000 # 健康检查超时时间，单位为毫秒
+  max-failed-times: 5 # 最大失败次数，超过则触发一次强制健康检查，默认 5
+  include-all: true # 引入所有代理集合
+
+######################## start ########################
+# 订阅链接配置区
 proxy-providers:
-  🌈:
+  # 第一个代理提供者
+  优质订阅源:
+    <<: *p # 继承通用配置
     url: "订阅链接"
-    type: http
+    path: ./proxies/优质订阅源.yaml
+    override:
+      <<: *override
+      additional-suffix: '优1' # 节点名添加后缀
 
-mode: rule
-ipv6: false
-allow-lan: true
-mixed-port: 7890
-log-level: error
-bind-address: "*"
-unified-delay: true
-tcp-concurrent: true
+  备用订阅源1:
+    <<: *p # 继承通用配置
+    url: "订阅链接"
+    path: ./proxies/备用订阅源1.yaml
+    override:
+      <<: *override
+      additional-suffix: '备1' # 节点名添加后缀
+
+  备用订阅源2:
+    <<: *p # 继承通用配置
+    url: "订阅链接"
+    path: ./proxies/备用订阅源2.yaml
+    override:
+      <<: *override
+      additional-suffix: '备2' # 节点名添加后缀
+
+######################## end ########################
+
+#redir-port: 7891 # 重定向端口，用于透明代理
+#tproxy-port: 1536 # TProxy 端口，支持 TUN 模式
+
+port: 7892 # HTTP 代理端口
+socks-port: 7893 # SOCKS5 代理端口
+mixed-port: 7890 # HTTP/SOCKS 混合代理端口
+allow-lan: true # 允许局域网设备连接代理
+bind-address: "*" # 绑定地址，默认为所有 IP 地址
+#authentication:
+#  - "username:password" # HTTP/SOCKS 代理认证，格式为 用户名:密码
+#skip-auth-prefixes:
+#  - 127.0.0.1/8 # 跳过本地地址的认证
+#  - ::1/128 # 跳过 IPv6 本地地址的认证
+#lan-allowed-ips:
+#  - 0.0.0.0/0 # 允许局域网访问的 IP 地址范围 (IPv4)
+#  - ::/0 # 允许局域网访问的 IP 地址范围 (IPv6)
+#lan-disallowed-ips:
+#  - 192.168.0.3/32 # 局域网禁止访问的特定 IP 地址
+
+# always 开启，强制匹配所有进程
+# strict 默认，由 Clash 判断是否开启
+# off 不匹配进程，推荐在路由器上使用此模式
 find-process-mode: off
-keep-alive-idle: 600
-keep-alive-interval: 15
+mode: rule # 工作模式为规则模式
+geodata-mode: false # 更改 geoip 使用文件，mmdb 或者 dat，可选 true/false,true为 dat
+# standard：标准加载器
+# memconservative：专为内存受限 (小内存) 设备优化的加载器 (默认值)
+geodata-loader: memconservative
+geox-url: # Geo 数据库配置，用于地理位置和 ASN 匹配
+  geoip: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@release/geoip.dat" # GeoIP 数据库
+  geosite: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@release/geosite.dat" # GeoSite 数据库
+  mmdb: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@release/geoip.metadb" # GeoIP mmdb 数据库
+  asn: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@release/GeoLite2-ASN.mmdb" # ASN 数据库
+geo-auto-update: true # 开启自动更新 Geo 数据库
+geo-update-interval: 24 # Geo 数据库更新间隔 (单位: 小时)
+# GeoSite 使用的匹配器实现，可用的实现：
+# - succinct（默认，与规则集相同）
+# - mph（来自 V2Ray，在 Xray 中也是 `hybrid`）
+geosite-matcher: succinct
 
-external-ui: ui
-external-ui-name: zashboard
-external-controller: 0.0.0.0:9090
-external-ui-url: "https://ghfast.top/github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip"
+global-ua: clash.meta # 自定全局 UA
+etag-support: true # 外部资源下载的 ETag 支持
+# silent 静默，不输出
+# error 仅输出发生错误至无法使用的日志
+# warning 输出发生错误但不影响运行的日志，以及 error 级别内容
+# info 输出一般运行的内容，以及 error 和 warning 级别的日志
+# debug 尽可能的输出运行中所有的信息
+log-level: info # 日志等级
+ipv6: false # 启用 IPv6
+#tls: # TLS 相关配置
+#  certificate: string # TLS 证书
+#  private-key: string # TLS 私钥
+#  custom-certifactes: # 自定义证书
+#    - |
+#      -----BEGIN CERTIFICATE-----
+#      format/pem...
+#      -----END CERTIFICATE-----
 
+external-controller: 0.0.0.0:9090 # 外部控制端口
+#external-controller-tls: 0.0.0.0:9443 # TLS 外部控制端口
+secret: "" # 控制接口密钥
+
+# RESTful API CORS标头配置
+external-controller-cors: # CORS 配置
+  allow-origins: # 允许来源
+    - "*"
+  allow-private-network: true # 允许私有网络访问
+#external-controller-unix: mihomo.sock  # Unix Socket 控制接口
+#external-controller-pipe: \\.\pipe\mihomo  # Windows 管道接口
+
+unified-delay: true # 开启统一延迟时
+tcp-concurrent: true # 启用 TCP 并发连接
+external-ui: ui # 外部 UI 目录
+external-ui-name: xd # 外部 UI 名称
+external-ui-url: "https://ghfast.top/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip" # 外部 UI 下载链接
+external-doh-server: /dns-query # 外部 DoH 服务器
+#interface-name:  # 使用的网络接口名称
+#routing-mark:  # 路由标记
+
+# 缓解移动设备耗电问题
+# https://github.com/vernesong/OpenClash/issues/2614
+disable-keep-alive: true # 禁用 TCP Keep Alive，在 Android 默认为 true
+keep-alive-idle: 15 # Keep-Alive 空闲时间 (单位: 秒)
+keep-alive-interval: 15 # Keep-Alive 间隔时间 (单位: 秒)
+
+# 实验性功能配置
+experimental:
+  quic-go-disable-gso: false # 禁用 QUIC 协议中的 GSO (Generic Segmentation Offload) 功能
+  quic-go-disable-ecn: false #禁用ECN
+  dialer-ip4p-convert: false # 启用IP4P地址转换
+
+# 本地 DNS 解析配置
+hosts:
+  dns.alidns.com:
+    - 223.5.5.5
+    - 223.6.6.6
+    - 2400:3200::1
+    - 2400:3200:baba::1
+  dns.google:
+    - 8.8.4.4
+    - 8.8.8.8
+    - 2001:4860:4860::8844
+    - 2001:4860:4860::8888
+
+# 缓存
 profile:
-  store-selected: true
-  store-fake-ip: true
+  store-selected: true # 存储已选择的代理组
+  store-fake-ip: true # 存储 Fake IP 地址
 
+# 网络时间协议 (NTP) 设置
+ntp:
+  enable: false # 启用 NTP 功能
+  write-to-system: false # 将同步的时间写入系统时钟，需root权限
+  server: ntp.ntsc.ac.cn # NTP 服务器地址
+  port: 123 # NTP 服务器端口，默认使用 123 端口
+  interval: 30 # 同步时间的间隔 (单位: 分钟)
+
+# sniffer 配置：用于检测和处理不同协议的流量
 sniffer:
-  enable: true
+  enable: true # 是否启用 sniffer 侦测功能，默认关闭
+  force-dns-mapping: true # 对 redir-host 类型识别的流量进行强制嗅探
+  parse-pure-ip: true # 对所有未获取到域名的流量进行强制嗅探
+  override-destination: false # 是否使用嗅探结果作为实际访问，默认为 true
   sniff:
     HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true
+      ports: [80, 8080-8880] # 对 HTTP 流量进行嗅探的端口范围，常用于网站和应用
+      override-destination: true # 覆盖目标地址以强制流量走代理或规则匹配
     TLS:
-      ports: [443, 8443]
+      ports: [443, 8443] # 修正：ports: 后添加空格
     QUIC:
-      ports: [443, 8443]
+      ports: [443, 8443] # 对 QUIC 协议的流量进行嗅探，QUI C 常用于改进 HTTPS 连接的速度
+  force-domain:
+    - "+.v2ex.com" # 对指定域名强制解析，即使 IP 地址已缓存或已知
   skip-domain:
-    - "Mijia Cloud"
-    - "dlg.io.mi.com"
-    - "+.push.apple.com"
-    - "+.wechat.com"
-    - "+.qq.com"
-    - "+.wechatapp.com"
-    - "+.oray.com"
-    - "+.sunlogin.net"
+    - Mijia.Cloud.com # 跳过指定域名，不对其进行嗅探处理（如智能家居流量）
+  skip-src-address:
+    - 192.168.0.3/32 # 跳过来源 IP 地址，不对其进行嗅探
+  skip-dst-address:
+    - 192.168.0.3/32 # 跳过目标 IP 地址，不对其进行嗅探
 
+# tun 配置：用于启用 TUN 模式，优化流量路由和 IP 设置
 tun:
-  enable: true
-  stack: mixed
+  enable: true # 启用 TUN 模式，用于透明代理
+  stack: mixed # 使用空间网络栈处理流量，可用值： system/gvisor/mixed
+  auto-route: true # 自动设置全局路由，可以自动将全局流量路由进入 tun 网卡。
+#  auto-redirect: true # 自动配置 iptables/nftables 以重定向 TCP 连接, 需要auto-route已启用, 需要root权限
+  auto-detect-interface: true # 自动选择流量出口接口，多出口网卡同时连接的设备建议手动指定出口网卡
   dns-hijack:
-    - "any:53"
-    - "tcp://any:53"
-  auto-route: true
-  auto-redirect: true
-  auto-detect-interface: true
-  route-exclude-address-set: [cnip,pvip]
+    - any:53 # 劫持所有 53 端口的 DNS 请求
+    - tcp://any:53 # 劫持 TCP 53 端口的 DNS 请求
+  inet4-address:
+    - 198.18.0.1/30
+  inet6-address:
+    - fdfe:dcba:9876::1/126
+  device: mihomo # 指定 TUN 设备名称，默认为 utun
+  mtu: 1500 # 设置最大传输单元 (MTU)，提高网络吞吐量
+  strict-route: true # 启用 auto-route 时执行严格的路由规则
+  gso: true # 通用分段卸载 (GSO)，提高网络性能
+  gso-max-size: 65536 # 设置 GSO 最大分段大小为 65536 字节
+  udp-timeout: 300 # 设置 UDP 超时时间为 300 秒，优化 NAT 映射
+#  iproute2-table-index: 2022 # 使用指定的路由表索引 (iproute2)
+#  iproute2-rule-index: 9000 # 设置路由规则的索引 (iproute2)
+  endpoint-independent-nat: false # 启用独立于端点的 NAT，性能可能会略有下降，所以不建议在不需要的时候开启
 
+# DNS 配置：控制 DNS 查询行为，支持增强模式和假 IP 功能
+# 查询 DNS 是否支持 H3 指令:
+#  curl https://1.1.1.1/dns-query --http3-only -vI
+#  q www.baidu.com @https://1.1.1.1/dns-query --http3
 dns:
-  enable: true
-  ipv6: false
-  listen: 0.0.0.0:1053
-  cache-algorithm: arc
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/15
-  fake-ip-filter-mode: blacklist
-  fake-ip-filter: [rule-set:filter,rule-set:cn]
-  nameserver-policy:  
-    'rule-set:filter': system
+  enable: true # 启用 DNS 模块
+  cache-algorithm: arc # 缓存算法，参数:lru 最近最少使用，arc 自适应替换缓存
+  prefer-h3: false # DOH 优先使用 http/3
+  use-hosts: true # 使用配置中的 hosts 文件条目
+  use-system-hosts: true # 使用系统的 hosts 文件条目
+  respect-rules: true # dns 连接遵守路由规则，需配置 proxy-server-nameserver, 强烈不建议和 prefer-h3 一起使用
+  listen: 0.0.0.0:1053 # 本地 DNS 监听端口，默认是 1053 端口
+  ipv6: false # 启用 IPv6 DNS 解析，避免 IPv6 地址的解析请求
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-    - 123.125.81.6
-  nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-    - https://doh.360.cn/dns-query
+  enhanced-mode: normal # 启用增强模式 normal or redir-host or fake-ip
+  nameserver-policy:
+    "RULE-SET:private_domain,cn_domain":
+      - "https://dns.alidns.com/dns-query#🎯全球直连"
+      - "https://doh.pub/dns-query#🎯全球直连"
+  nameserver: # 被墙的dns需指定代理
+    - "https://dns.google/dns-query#🚀全球代理" # Google DNS over DOH
+    - "https://1.1.1.1/dns-query#🚀全球代理" # Google DNS over DOH
+  proxy-server-nameserver: # 代理节点域名解析服务器，仅用于解析代理节点的域名
+    - "https://dns.alidns.com/dns-query#🎯全球直连"
+    - "https://doh.pub/dns-query#🎯全球直连"
+  direct-nameserver: #  用于直连出口域名解析的 DNS 服务器
+    - "https://dns.alidns.com/dns-query#🎯全球直连"
+    - "https://doh.pub/dns-query#🎯全球直连"
+
+# ================= 定义落地节点 =================
+proxies:
+  - name: "🇺🇸落地(经中转)"
+    type: ss
+    server: 156.146.38.169
+    port: 443
+    cipher: aes-128-gcm
+    password: "shadowsocks"
+    # 指定了通过【前置节点】这个策略组去联网
+    dialer-proxy: 前置节点
+# =================================================================
 
 proxy-groups:
-  - name: Proxy
-    type: select
-    include-all: true
-    proxies: [Urltest]
-    icon: https://ghfast.top/raw.githubusercontent.com/Orz-3/mini/master/Color/SSID.png
+  - { name: 🚀全球代理, type: select, proxies: [🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
 
-  - name: Urltest
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 600
-    tolerance: 60
-    include-all: true
-    icon: https://ghfast.top/raw.githubusercontent.com/Orz-3/mini/master/Color/Urltest.png
+  # 应用分组
+  - { name: GitHub, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/GitHub.webp }
+  - { name: Netflix, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Netflix.webp }
+  - { name: OpenAI, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/OpenAI.webp }
+  - { name: 国际媒体, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/ProxyTV.webp }
+  - { name: Steam, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Steam.webp }
+  - { name: Telegram, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Telegram.webp }
+  - { name: YouTube, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/YouTube.webp }
 
-  - name: Final
-    type: select
-    proxies: [Proxy, DIRECT]
-    icon: https://ghfast.top/raw.githubusercontent.com/Orz-3/mini/master/Color/Available.png
-  
-  - name: GLOBAL
-    type: select
-    include-all: true
-    proxies: [Proxy, Urltest]
-    icon: https://ghfast.top/raw.githubusercontent.com/Orz-3/mini/master/Color/Skicat.png
+  # 地区分组
+# ==================== 手动选择 ====================
+  - {name: 🇭🇰 香港节点, type: select, include-all: true, filter: "(?i)(?:🇭🇰|(?:^|[\\s_-])(HK)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*HK(?=$|[\\s_-])|香港|Hong Kong|HongKong)" }
+  - {name: 🇯🇵 日本节点, type: select, include-all: true, filter: "(?i)(?:🇯🇵|(?:^|[\\s_-])(JP)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*JP(?=$|[\\s_-])|日本|Japan)" }
+  - {name: 🇸🇬 狮城节点, type: select, include-all: true, filter: "(?i)(?:🇸🇬|(?:^|[\\s_-])(SG)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*SG(?=$|[\\s_-])|新加坡|Singapore)" }
+  - {name: 🇺🇲 美国节点, type: select, include-all: true, filter: "(?i)(?:🇺🇸|(?:^|[\\s_-])(US)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*US(?=$|[\\s_-])|美国|United States|(?:(?:^|[\\s_-])CT(?=$|[\\s_-]))|UnitedStates)" }
 
+# ==================== 故障转移 ====================
+  - {name: 🔯 香港故转, type: fallback, include-all: true, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇭🇰|(?:^|[\\s_-])(HK)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*HK(?=$|[\\s_-])|香港|Hong Kong|HongKong)" }
+  - {name: 🔯 日本故转, type: fallback, include-all: true, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇯🇵|(?:^|[\\s_-])(JP)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*JP(?=$|[\\s_-])|日本|Japan)" }
+  - {name: 🔯 狮城故转, type: fallback, include-all: true, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇸🇬|(?:^|[\\s_-])(SG)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*SG(?=$|[\\s_-])|新加坡|Singapore)" }
+  - {name: 🔯 美国故转, type: fallback, include-all: true, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇺🇸|(?:^|[\\s_-])(US)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*US(?=$|[\\s_-])|美国|United States|(?:(?:^|[\\s_-])CT(?=$|[\\s_-]))|UnitedStates)" }
+
+# ==================== 自动选择 ====================
+  - {name: ♻️ 香港自动, type: url-test, include-all: true, tolerance: 20, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇭🇰|(?:^|[\\s_-])(HK)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*HK(?=$|[\\s_-])|香港|Hong Kong|HongKong)", exclude-filter: "(?i)落地", hidden: true}
+  - {name: ♻️ 日本自动, type: url-test, include-all: true, tolerance: 20, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇯🇵|(?:^|[\\s_-])(JP)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*JP(?=$|[\\s_-])|日本|Japan)", exclude-filter: "(?i)落地", hidden: true}
+  - {name: ♻️ 狮城自动, type: url-test, include-all: true, tolerance: 20, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇸🇬|(?:^|[\\s_-])(SG)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*SG(?=$|[\\s_-])|新加坡|Singapore)", exclude-filter: "(?i)落地", hidden: true}
+  - {name: ♻️ 美国自动, type: url-test, include-all: true, tolerance: 20, url: 'https://www.google.com/generate_204', interval: 300, filter: "(?i)(?:🇺🇸|(?:^|[\\s_-])(US)(?:(?=$|[\\s_-])|(?:[-_0-9]+(?=$|[\\s_-])))|(?:^|[\\s_-])[-_0-9]*US(?=$|[\\s_-])|美国|United States|(?:(?:^|[\\s_-])CT(?=$|[\\s_-]))|UnitedStates)", exclude-filter: "(?i)落地", hidden: true}
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, url: 'https://www.google.com/generate_204', interval: 300, filter: "^(?!.*(直连|(?i)港|HK|Hong|日|JP|Japan|新加坡|坡|狮城|SG|Singapore|美|US|States|America)).*$", exclude-filter: "(?i)落地", hidden: true}
+
+  - {name: 🌐 全部节点, type: select, include-all: true, exclude-filter: "(?i)落地"}
+  - {name: 前置节点,  type: select, proxies: [♻️ 自动选择, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, 🌐 全部节点]}
+
+  - { name: 🎯全局直连, type: select, hidden: true, proxies: [DIRECT] }
+  - { name: 🚫拒绝连接, type: select, hidden: true, proxies: [REJECT] }
+  - { name: 🚫静默拒绝, type: select, hidden: true, proxies: [REJECT-DROP] }
+  - { name: ⚪绕过连接, type: select, hidden: true, proxies: [PASS] }
+  - { name: 🪧广告拦截, type: select, proxies: [🚫拒绝连接, 🚫静默拒绝, ⚪绕过连接] , hidden: true}
+  - { name: 🔎HttpDNS, type: select, proxies: [🚫拒绝连接, 🚫静默拒绝, ⚪绕过连接] , hidden: true}
+  - { name: 💧泄漏拦截, type: select, proxies: [🚫拒绝连接, 🚫静默拒绝, ⚪绕过连接] , hidden: true}
+  - { name: 🎯全球直连, type: select, proxies: [🎯全局直连, 🚀全球代理] , hidden: true}
+
+
+
+# ==================== 规则路由 ====================
 rules:
-  - OR,((AND,((NETWORK,UDP),(DST-PORT,443))),(AND,((NETWORK,TCP),(DST-PORT,853))),(DST-PORT,3478,5349)),REJECT
-  - RULE-SET,adblock,REJECT
-  - RULE-SET,me,DIRECT
-  - RULE-SET,apple,DIRECT
-  - RULE-SET,micro,DIRECT
-  - RULE-SET,proxy,Proxy
-  - RULE-SET,cn,DIRECT
-  - RULE-SET,tgip,Proxy
-  - RULE-SET,cnip,DIRECT
-  - MATCH,Final
+  - RULE-SET,advertising-ads_domain,🪧广告拦截
+  
+  - OR,((RULE-SET,blockhttpdns_domain),(RULE-SET,blockhttpdns_ip,no-resolve)),🔎HttpDNS
+  
+  - OR,((AND,((NETWORK,TCP),(DST-PORT,5349))),(AND,((NETWORK,UDP),(DST-PORT,5350))),(AND,((NETWORK,UDP),(DST-PORT,5351))),(AND,((NETWORK,UDP),(DST-PORT,19302))),(RULE-SET,stun_domain),(DST-PORT,3478),(RULE-SET,private_domain),(RULE-SET,private_ip,no-resolve)),💧泄漏拦截
 
-rule-anchor:
-  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
-  txt: &txt {type: http, interval: 86400, behavior: domain, format: text}
-  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  - OR,((RULE-SET,telegram_domain),(DOMAIN-KEYWORD,nicegram)),Telegram
+  
+  - OR,((RULE-SET,github_domain),(DOMAIN-KEYWORD,github)),GitHub
+  
+  - OR,((RULE-SET,claude_domain),(RULE-SET,openai_domain),(RULE-SET,gemini_domain),(AND,((RULE-SET,copilot_domain),(NOT,((DOMAIN,www.bing.com))))),(DOMAIN-KEYWORD,openai),(DOMAIN-KEYWORD,openaicom-api),(DOMAIN-KEYWORD,colab),(DOMAIN-KEYWORD,developerprofiles),(DOMAIN-KEYWORD,generativelanguage)),OpenAI
+  
+  - OR,((RULE-SET,steam_domain),(DOMAIN-KEYWORD,steambroadcast),(DOMAIN-KEYWORD,steamstore),(DOMAIN-KEYWORD,steamuserimages)),Steam
+  
+  - RULE-SET,netflix_domain,Netflix
+  
+  - RULE-SET,globalmedia_domain,国际媒体
+
+  - RULE-SET,telegram_ip,Telegram,no-resolve
+  - RULE-SET,copilot_ip,OpenAI,no-resolve
+  - RULE-SET,openai_ip,OpenAI,no-resolve
+  - RULE-SET,netflix_ip,Netflix,no-resolve
+  - RULE-SET,youtube_ip,YouTube,no-resolve
+  - RULE-SET,globalmedia_ip,国际媒体,no-resolve
+  - RULE-SET,cn_domain,🎯全球直连
+  - RULE-SET,cn_ip,🎯全球直连
+
+  - MATCH,🚀全球代理
+
 
 rule-providers:
-  me:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/me.mrs"
-  filter:
-    <<: *txt
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/filter.list"
-  cn:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/cn.mrs"
-  apple:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/apple.mrs"
-  micro:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/micro.mrs"
-  proxy:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/proxy.mrs"
-  tgip:
-    <<: *ip
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/tgip.mrs"
-  pvip:
-    <<: *ip
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/pvip.mrs"
-  cnip:    
-    <<: *ip
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/cnip.mrs"
-  adblock:
-    <<: *domain
-    url: "https://ghfast.top/raw.githubusercontent.com/77160860/rule/main/mihomo/adblock.mrs"
+  # ------------------------------------------------------------
+  # ios_rule_script 规则
+  claude_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Claude/Claude_OCD_Domain.mrs"
+    path: ./ruleset/Claude_Domain.mrs
+
+  copilot_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Copilot/Copilot_OCD_Domain.mrs"
+    path: ./ruleset/Copilot_Domain.mrs
+
+  copilot_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Copilot/Copilot_OCD_IP.mrs"
+    path: ./ruleset/Copilot_IP.mrs
+
+  gemini_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Gemini/Gemini_OCD_Domain.mrs"
+    path: ./ruleset/Gemini_Domain.mrs
+
+  openai_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/OpenAI/OpenAI_OCD_Domain.mrs"
+    path: ./ruleset/OpenAI_Domain.mrs
+
+  openai_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/OpenAI/OpenAI_OCD_IP.mrs"
+    path: ./ruleset/OpenAI_IP.mrs
+
+  github_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GitHub/GitHub_OCD_Domain.mrs"
+    path: ./ruleset/GitHub_Domain.mrs
+
+  steam_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Steam/Steam_OCD_Domain.mrs"
+    path: ./ruleset/Steam_Domain.mrs
+
+  youtube_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/YouTube/YouTube_OCD_IP.mrs"
+    path: ./ruleset/YouTube_IP.mrs
+
+  globalmedia_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GlobalMedia/GlobalMedia_OCD_Domain.mrs"
+    path: ./ruleset/Media_Domain.mrs
+
+  globalmedia_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GlobalMedia/GlobalMedia_OCD_IP.mrs"
+    path: ./ruleset/Media_IP.mrs
+
+  blockhttpdns_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/BlockHttpDNS/BlockHttpDNS_OCD_Domain.mrs"
+    path: ./ruleset/Category_httpdns_Domain.mrs
+
+  blockhttpdns_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/BlockHttpDNS/BlockHttpDNS_OCD_IP.mrs"
+    path: ./ruleset/Category_httpdns_IP.mrs
+
+  # ------------------------------------------------------------
+  # MetaCubeX 规则
+  private_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs"
+    path: ./ruleset/Private_Domain.mrs
+
+  private_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs"
+    path: ./ruleset/Private_IP.mrs
+
+  telegram_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs"
+    path: ./ruleset/Telegram_Domain.mrs
+
+  telegram_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"
+    path: ./ruleset/Telegram_IP.mrs
+
+  netflix_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/netflix.mrs"
+    path: ./ruleset/Netflix_Domain.mrs
+
+  netflix_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/netflix.mrs"
+    path: ./ruleset/Netflix_IP.mrs
+
+  # ------------------------------------------------------------
+  # 自定义 规则
+  advertising-ads_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Clash.mrs"
+    path: ./ruleset/Advertising_ads_Domain.mrs
+
+  cn_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/clash-rules@release/direct.mrs"
+    path: ./ruleset/CN_Domain.mrs
+
+  cn_ip:
+    <<: *ipcidr_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/clash-rules@release/cncidr.mrs"
+    path: ./ruleset/CN_IP.mrs
+
+  stun_domain:
+    <<: *domain_mrs
+    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/rules/mihomo/STUN/STUN_Domain.mrs"
+    path: ./ruleset/STUN_Domain.mrs
