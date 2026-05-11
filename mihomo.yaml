@@ -1,7 +1,7 @@
 # ------------------------------------------------------------
 # 锚点区
-proxy: &proxy { type: select, include-all: true, proxies: [🚀全球代理, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
-direct: &direct { type: select, include-all: true, proxies: [🎯全球直连, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
+proxy: &proxy { type: select, include-all: true, proxies: [🚀全球代理, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇯🇵 日本1] }
+direct: &direct { type: select, include-all: true, proxies: [🎯全球直连, 🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇯🇵 日本1] }
 ipcidr_mrs: &ipcidr_mrs { type: http, interval: 86400, behavior: ipcidr, format: mrs, proxy: 🎯全球直连 }
 domain_mrs: &domain_mrs { type: http, interval: 86400, behavior: domain, format: mrs, proxy: 🎯全球直连 }
 # 延迟检测 URL
@@ -14,7 +14,7 @@ p: &p
       - meta;clash.meta;Clash/v1.18.0;clash
   health-check: # 健康检查 (延迟测试)
     enable: true
-    url: https://www.gstatic.com/generate_204 # 健康检查测试地址
+    url: https://www.google.com/generate_204 # 健康检查测试地址
     interval: 300 # 健康检查间隔
     timeout: 5000 # 健康检查超时时间
     lazy: true # 懒惰状态
@@ -30,7 +30,7 @@ u: &u
   type: url-test # 测试类型
   tolerance: 1 # 自动选择切换容差
   strategy: consistent-hashing # 负载均衡策略
-  url: https://www.gstatic.com/generate_204 #健康检查测试地址
+  url: https://www.google.com/generate_204 #健康检查测试地址
   interval: 300 #健康检查间隔，如不为 0 则启用定时测试，单位为秒
   lazy: true # 懒惰状态
   timeout: 5000 # 健康检查超时时间，单位为毫秒
@@ -249,7 +249,7 @@ dns:
     - 119.29.29.29
   enhanced-mode: normal # 启用增强模式 normal or redir-host or fake-ip
   nameserver-policy:
-    "RULE-SET:private_domain,cn_domain":
+    "RULE-SET:private,cn":
       - "https://dns.alidns.com/dns-query#🎯全球直连"
       - "https://doh.pub/dns-query#🎯全球直连"
   nameserver: # 被墙的dns需指定代理
@@ -264,27 +264,15 @@ dns:
 
 # ================= 定义落地节点 =================
 proxies:
-  - name: "🇺🇸落地(经中转)"
-    type: ss
-    server: 156.146.38.169
-    port: 443
-    cipher: aes-128-gcm
-    password: "shadowsocks"
-    # 指定了通过【前置节点】这个策略组去联网
-    dialer-proxy: 前置节点
+  - {name: "🇯🇵 日本1", type: ss, server: 149.22.87.204, port: 443, cipher: aes-128-gcm, password: "shadowsocks", dialer-proxy: 前置节点}
 # =================================================================
 
 proxy-groups:
-  - { name: 🚀全球代理, type: select, proxies: [🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇺🇸落地(经中转)] }
+  - { name: 🚀全球代理, type: select, proxies: [🔯 香港故转, 🔯 日本故转, 🔯 狮城故转, 🔯 美国故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 狮城自动, ♻️ 美国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇸🇬 狮城节点, 🇺🇲 美国节点, 🇯🇵 日本1] }
 
   # 应用分组
-  - { name: GitHub, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/GitHub.webp }
-  - { name: Netflix, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Netflix.webp }
-  - { name: OpenAI, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/OpenAI.webp }
-  - { name: 国际媒体, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/ProxyTV.webp }
-  - { name: Steam, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Steam.webp }
+  - { name: AI 平台, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/OpenAI.webp }
   - { name: Telegram, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/Telegram.webp }
-  - { name: YouTube, <<: *proxy, icon: https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/icon/webp/100/YouTube.webp }
 
   # 地区分组
 # ==================== 手动选择 ====================
@@ -323,134 +311,145 @@ proxy-groups:
 # ==================== 规则路由 ====================
 rules:
   - RULE-SET,advertising-ads_domain,🪧广告拦截
-  
-  - OR,((RULE-SET,blockhttpdns_domain),(RULE-SET,blockhttpdns_ip,no-resolve)),🔎HttpDNS
-  
-  - OR,((AND,((NETWORK,TCP),(DST-PORT,5349))),(AND,((NETWORK,UDP),(DST-PORT,5350))),(AND,((NETWORK,UDP),(DST-PORT,5351))),(AND,((NETWORK,UDP),(DST-PORT,19302))),(RULE-SET,stun_domain),(DST-PORT,3478),(RULE-SET,private_domain),(RULE-SET,private_ip,no-resolve)),💧泄漏拦截
-
-  - OR,((RULE-SET,telegram_domain),(DOMAIN-KEYWORD,nicegram)),Telegram
-  
-  - OR,((RULE-SET,github_domain),(DOMAIN-KEYWORD,github)),GitHub
-  
-  - OR,((RULE-SET,claude_domain),(RULE-SET,openai_domain),(RULE-SET,gemini_domain),(AND,((RULE-SET,copilot_domain),(NOT,((DOMAIN,www.bing.com))))),(DOMAIN-KEYWORD,openai),(DOMAIN-KEYWORD,openaicom-api),(DOMAIN-KEYWORD,colab),(DOMAIN-KEYWORD,developerprofiles),(DOMAIN-KEYWORD,generativelanguage)),OpenAI
-  
-  - OR,((RULE-SET,steam_domain),(DOMAIN-KEYWORD,steambroadcast),(DOMAIN-KEYWORD,steamstore),(DOMAIN-KEYWORD,steamuserimages)),Steam
-  
-  - RULE-SET,netflix_domain,Netflix
-  
-  - RULE-SET,globalmedia_domain,国际媒体
-
-  - RULE-SET,telegram_ip,Telegram,no-resolve
-  - RULE-SET,copilot_ip,OpenAI,no-resolve
-  - RULE-SET,openai_ip,OpenAI,no-resolve
-  - RULE-SET,netflix_ip,Netflix,no-resolve
-  - RULE-SET,youtube_ip,YouTube,no-resolve
-  - RULE-SET,globalmedia_ip,国际媒体,no-resolve
-  - RULE-SET,cn_domain,🎯全球直连
-  - RULE-SET,cn_ip,🎯全球直连
-
+  - RULE-SET,private,🎯全球直连
+  - RULE-SET,applications,🎯全球直连
+  - RULE-SET,microsoft-cn,🎯全球直连
+  - RULE-SET,apple-cn,🎯全球直连
+  - RULE-SET,google-cn,🎯全球直连
+  - RULE-SET,games-cn,🎯全球直连
+  - RULE-SET,games,🎯全球直连
+  - RULE-SET,ai,AI 平台
+  - RULE-SET,networktest,🎯全球直连
+  - RULE-SET,proxy,🚀全球代理
+  - RULE-SET,cn,🎯全球直连
+  - RULE-SET,privateip,🎯全球直连,no-resolve
+  - RULE-SET,cnip,🎯全球直连
+  - RULE-SET,telegramip,Telegram,no-resolve
   - MATCH,🚀全球代理
 
 
+
+
 rule-providers:
-  # ------------------------------------------------------------
-  # ios_rule_script 规则
-  claude_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Claude/Claude_OCD_Domain.mrs"
-    path: ./ruleset/Claude_Domain.mrs
+  trackerslist:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/trackerslist.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/trackerslist.mrs"
+    interval: 86400
 
-  copilot_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Copilot/Copilot_OCD_Domain.mrs"
-    path: ./ruleset/Copilot_Domain.mrs
+  private:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/private.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.mrs"
+    interval: 86400
 
-  copilot_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Copilot/Copilot_OCD_IP.mrs"
-    path: ./ruleset/Copilot_IP.mrs
+  applications:
+    type: http
+    behavior: classical
+    format: text
+    path: ./ruleset/applications.list
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/applications.list"
+    interval: 86400
 
-  gemini_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Gemini/Gemini_OCD_Domain.mrs"
-    path: ./ruleset/Gemini_Domain.mrs
+  microsoft-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/microsoft-cn.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/microsoft-cn.mrs"
+    interval: 86400
 
-  openai_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/OpenAI/OpenAI_OCD_Domain.mrs"
-    path: ./ruleset/OpenAI_Domain.mrs
+  apple-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/apple-cn.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/apple-cn.mrs"
+    interval: 86400
 
-  openai_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/OpenAI/OpenAI_OCD_IP.mrs"
-    path: ./ruleset/OpenAI_IP.mrs
+  google-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/google-cn.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/google-cn.mrs"
+    interval: 86400
 
-  github_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GitHub/GitHub_OCD_Domain.mrs"
-    path: ./ruleset/GitHub_Domain.mrs
+  games-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/games-cn.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/games-cn.mrs"
+    interval: 86400
 
-  steam_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/Steam/Steam_OCD_Domain.mrs"
-    path: ./ruleset/Steam_Domain.mrs
+  games:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/games.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/games.mrs"
+    interval: 86400
 
-  youtube_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/YouTube/YouTube_OCD_IP.mrs"
-    path: ./ruleset/YouTube_IP.mrs
+  ai:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/ai.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ai.mrs"
+    interval: 86400
 
-  globalmedia_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GlobalMedia/GlobalMedia_OCD_Domain.mrs"
-    path: ./ruleset/Media_Domain.mrs
+  networktest:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/networktest.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/networktest.mrs"
+    interval: 86400
 
-  globalmedia_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/GlobalMedia/GlobalMedia_OCD_IP.mrs"
-    path: ./ruleset/Media_IP.mrs
+  proxy:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/proxy.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/proxy.mrs"
+    interval: 86400
 
-  blockhttpdns_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/BlockHttpDNS/BlockHttpDNS_OCD_Domain.mrs"
-    path: ./ruleset/Category_httpdns_Domain.mrs
+  cn:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/cn.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cn.mrs"
+    interval: 86400
 
-  blockhttpdns_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/peiyingyao/Rule-for-OCD@master/rule/Clash/BlockHttpDNS/BlockHttpDNS_OCD_IP.mrs"
-    path: ./ruleset/Category_httpdns_IP.mrs
+  privateip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    path: ./ruleset/privateip.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/privateip.mrs"
+    interval: 86400
 
-  # ------------------------------------------------------------
-  # MetaCubeX 规则
-  private_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs"
-    path: ./ruleset/Private_Domain.mrs
+  cnip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    path: ./ruleset/cnip.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cnip.mrs"
+    interval: 86400
 
-  private_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs"
-    path: ./ruleset/Private_IP.mrs
-
-  telegram_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs"
-    path: ./ruleset/Telegram_Domain.mrs
-
-  telegram_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"
-    path: ./ruleset/Telegram_IP.mrs
-
-  netflix_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/netflix.mrs"
-    path: ./ruleset/Netflix_Domain.mrs
-
-  netflix_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/netflix.mrs"
-    path: ./ruleset/Netflix_IP.mrs
+  telegramip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    path: ./ruleset/telegramip.mrs
+    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/telegramip.mrs"
+    interval: 86400
 
   # ------------------------------------------------------------
   # 自定义 规则
@@ -458,18 +457,3 @@ rule-providers:
     <<: *domain_mrs
     url: "https://jsd.onmicrosoft.cn/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Clash.mrs"
     path: ./ruleset/Advertising_ads_Domain.mrs
-
-  cn_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/clash-rules@release/direct.mrs"
-    path: ./ruleset/CN_Domain.mrs
-
-  cn_ip:
-    <<: *ipcidr_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/clash-rules@release/cncidr.mrs"
-    path: ./ruleset/CN_IP.mrs
-
-  stun_domain:
-    <<: *domain_mrs
-    url: "https://jsd.onmicrosoft.cn/gh/Kwisma/rules@main/rules/mihomo/STUN/STUN_Domain.mrs"
-    path: ./ruleset/STUN_Domain.mrs
