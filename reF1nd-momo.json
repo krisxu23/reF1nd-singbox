@@ -35,7 +35,7 @@
         "interval": "10m",
         "timeout": "3s"
       },
-      "url": "https://misub.bursaonline.eu.org/920731/home?base64",
+      "url": "订阅",
       "exclude": "官网|剩余|流量|套餐|免费|订阅|全球直连|到期时间|GB|Expire Date|Traffic|ExpireDate",
       "update_interval": "12h"
     },
@@ -48,7 +48,7 @@
         "interval": "10m",
         "timeout": "3s"
       },
-      "url": "https://misub.bursaonline.eu.org/920731/CF?base64",
+      "url": "订阅",
       "exclude": "官网|剩余|流量|套餐|免费|订阅|全球直连|到期时间|GB|Expire Date|Traffic|ExpireDate",
       "update_interval": "1h"
     }
