@@ -138,30 +138,8 @@
 
     { "tag": "🐸 手动选择", "type": "selector", "providers": ["订阅1"], "exclude": "网站|流量|地址|剩余|过期|免费|时间|有效|Traffic|ExpireDate|GB|Expire Date" },
     { "tag": "♻️ 自动选择", "type": "urltest", "providers": ["订阅1", "订阅2"], "url": "https://www.google.com/generate_204", "interval": "3m", "tolerance": 150, "fallback": { "enabled": true, "max_delay": "200ms" }, "exclude": "网站|流量|地址|剩余|过期|免费|时间|有效|Traffic|ExpireDate|GB|Expire Date" },
-    { "tag": "🍃 前置选择", "type": "urltest", "providers": ["订阅2"], "url": "https://www.google.com/generate_204", "interval": "3m", "tolerance": 150, "fallback": { "enabled": true, "max_delay": "200ms" }, "exclude": "网站|流量|地址|剩余|过期|免费|时间|有效|Traffic|ExpireDate|GB|Expire Date" },
-
-    { "tag": "落地选择", "type": "selector", "outbounds": ["🇯🇵 日本1", "🇯🇵 日本2", "🇯🇵 日本3", "🇯🇵 日本4", "🇺🇸 美国新泽西1", "🇺🇸 美国新泽西4", "🇺🇸 美国1", "🇺🇸 美国达拉斯1", "🇺🇸 美国圣何塞1", "🇺🇸 美国圣何塞4", "🇺🇸 美国旧金山1", "🇺🇸 美国旧金山2", "🇺🇸 美国新泽西2", "🇺🇸 美国圣何塞2", "🇺🇸 美国旧金山3", "🇺🇸 美国旧金山4", "🇺🇸 美国新泽西3", "🇺🇸 美国圣何塞3"] },
-    { "tag": "落地自动", "type": "urltest", "outbounds": ["🇯🇵 日本1", "🇯🇵 日本2", "🇯🇵 日本3", "🇯🇵 日本4", "🇺🇸 美国新泽西1", "🇺🇸 美国新泽西4", "🇺🇸 美国1", "🇺🇸 美国达拉斯1", "🇺🇸 美国圣何塞1", "🇺🇸 美国圣何塞4", "🇺🇸 美国旧金山1", "🇺🇸 美国旧金山2", "🇺🇸 美国新泽西2", "🇺🇸 美国圣何塞2", "🇺🇸 美国旧金山3", "🇺🇸 美国旧金山4", "🇺🇸 美国新泽西3", "🇺🇸 美国圣何塞3"], "url": "https://www.google.com/generate_204", "interval": "3m", "tolerance": 150 },
-
-    { "type": "shadowsocks", "tag": "🇯🇵 日本1", "server": "149.22.87.204", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇯🇵 日本2", "server": "149.22.87.241", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇯🇵 日本3", "server": "149.22.87.240", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇯🇵 日本4", "server": "212.102.50.42", "server_port": 443, "method": "aes-128-cfb", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国新泽西1", "server": "37.19.198.243", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国新泽西4", "server": "37.19.198.244", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国1", "server": "184.170.241.194", "server_port": 443, "method": "aes-128-cfb", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国达拉斯1", "server": "156.146.38.163", "server_port": 443, "method": "aes-128-cfb", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国圣何塞1", "server": "156.146.38.169", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国圣何塞4", "server": "156.146.38.170", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国旧金山1", "server": "212.102.47.130", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国旧金山2", "server": "212.102.47.131", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国新泽西2", "server": "37.19.198.160", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国圣何塞2", "server": "156.146.38.168", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国旧金山3", "server": "212.102.47.129", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国旧金山4", "server": "212.102.47.132", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国新泽西3", "server": "37.19.198.236", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" },
-    { "type": "shadowsocks", "tag": "🇺🇸 美国圣何塞3", "server": "156.146.38.167", "server_port": 443, "method": "aes-128-gcm", "password": "shadowsocks", "detour": "🍃 前置选择" }
-  ],
+    { "tag": "🍃 前置选择", "type": "selector", "outbounds": ["♻️ 自动选择", "🐸 手动选择"]}
+],
   "route": {
     "default_domain_resolver": {"server": "ali_dns"},
     "rules": [
