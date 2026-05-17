@@ -33,7 +33,7 @@
       {"clash_mode": "global", "server": "fakeip"},
       {"query_type": ["PTR", "SVCB", "HTTPS"], "action": "reject"},
       {"rule_set": "ads", "action": "predefined", "rcode": "NXDOMAIN"},
-      {"rule_set": "private-ip", "server": "local"},
+      {"rule_set": "fakeip-filter", "server": "local"},
       {"action": "evaluate", "server": "public"},
       {"match_response": true, "ip_accept_any": true, "invert": true, "action": "respond"},
       {"type": "logical", "mode": "or", "rules": [{"match_response": true, "ip_is_private": true}, {"match_response": true, "rule_set": "cn-ip"}], "action": "respond"},
@@ -103,6 +103,7 @@
       { "rule_set": ["cn-ip"], "outbound": "🔒 国内服务" },
     ],
     "rule_set": [
+      { "tag": "fakeip-filter", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset/fakeip-filter.srs"},
       { "tag": "ads", "type": "remote", "format": "binary", "url": "https://gcore.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblocksingbox.srs"},
       { "tag": "category-ai-!cn", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-ai-!cn.srs"},
       { "tag": "youtube", "type": "remote", "format": "binary", "url": "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/youtube.srs"},
