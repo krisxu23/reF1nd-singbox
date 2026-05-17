@@ -51,8 +51,8 @@
     { "tag": "proxy_client", "detour": "🚀 节点选择", "stream_receive_window": 0, "connection_receive_window": 0 }
   ],
   "inbounds": [
-    {"tag": "dns-in", "type": "direct", "listen": "::", "listen_port": 1053},
-    {"tag": "tproxy-in", "type": "tproxy", "listen": "::", "listen_port": 7890}
+    { "type": "mixed", "tag": "mixed-in", "listen": "0.0.0.0", "listen_port": 2080 },
+    { "type": "tun", "tag": "tun-in", "address": "172.19.0.1/30", "auto_route": true, "strict_route": true, "stack": "mixed" }
   ],
   "outbounds": [
     {"tag": "🚀 节点选择", "type": "selector", "outbounds": ["⚡ 自动选择", "🖐️ 手动切换", "🇭🇰 Hong Kong", "🇯🇵 Japan", "🇺🇸 United States", "🇸🇬 Singapore", "🌍 其他地区", "DIRECT"] },
